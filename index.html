@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cruzeiro EC | Central de Rendimento</title>
+    <style>
+        :root {
+            --bg-color: #0b1320;
+            --surface: #132238;
+            --surface-2: #1b2f4d;
+            --primary-blue: #003a70;
+            --accent-blue: #1d6fd8;
+            --white: #ffffff;
+            --muted: #9fb3c8;
+            --border: #284266;
+            --gold: #f1c40f;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: '-apple-system', BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--white);
+            min-height: 100vh;
+        }
+
+        .app-container {
+            max-width: 540px;
+            min-height: 100vh;
+            margin: 0 auto;
+            background: var(--bg-color);
+            padding-bottom: 84px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.45);
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #002855 0%, var(--primary-blue) 60%, var(--accent-blue) 100%);
+            padding: 16px 14px;
+            text-align: center;
+            border-bottom: 3px solid var(--gold);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .logo-svg {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            font-size: 11px;
+            color: var(--gold);
+            font-weight: 700;
+            letter-spacing: 1.1px;
+            margin-top: 2px;
+            text-transform: uppercase;
+        }
+
+        .user-bar {
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            padding: 8px 14px;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .btn-logout {
+            background: rgba(231, 76, 60, 0.18);
+            color: #ff8a80;
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            width: auto;
+            margin: 0;
+        }
+
+        .screen {
+            display: none;
+            padding: 14px;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title span.tag {
+            font-size: 10px;
+            background: var(--accent-blue);
+            color: var(--white);
+            padding: 3px 8px;
+            border-radius: 999px;
+        }
+
+        .form-group {
+            margin-bottom: 11px;
+        }
+
+        label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--muted);
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--bg-color);
+            color: var(--white);
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px 14px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--primary-blue));
+            color: var(--white);
+            border: none;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: transform 0.15s, opacity 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        button.btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--accent-blue);
+            color: #7ab8ff;
+        }
+
+        button.btn-gold {
+            background: linear-gradient(135deg, #f1c40f, #d4ac0d);
+            color: #111;
+        }
+
+        button.btn-success {
+            background: linear-gradient(135deg, #27ae60, #1e8449);
+            color: var(--white);
+        }
+
+        button.btn-danger {
+            background: rgba(231, 76, 60, 0.2);
+            color: #ff8a80;
+            border: 1px solid rgba(231, 76, 60, 0.45);
+        }
+
+        .player-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+        }
+
+        .player-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 11px;
+        }
+
+        .player-identity {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .jersey-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: var(--primary-blue);
+            border: 1.5px solid var(--gold);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.1;
+            flex-shrink: 0;
+        }
+
+        .jersey-num {
+            font-size: 14px;
+            font-weight: 900;
+            color: var(--white);
+        }
+
+        .jersey-pos {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .player-name {
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .player-style {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .rating-pill {
+            background: rgba(241, 196, 15, 0.15);
+            border: 1px solid rgba(241, 196, 15, 0.45);
+            color: var(--gold);
+            padding: 6px 9px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 66px;
+        }
+
+        .rating-pill strong {
+            display: block;
+            font-size: 15px;
+            line-height: 1.1;
+        }
+
+        .rating-pill small {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .captain-box {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 9px 12px;
+            margin-bottom: 11px;
+        }
+
+        .captain-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .captain-pct {
+            color: var(--gold);
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 7px;
+            background: var(--surface-2);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--gold));
+            border-radius: 999px;
+            transition: width 0.35s ease;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .stat-box {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .stat-box .val {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--white);
+        }
+
+        .stat-box .avg {
+            font-size: 10px;
+            color: #7ab8ff;
+            margin-top: 2px;
+            font-weight: 600;
+        }
+
+        .stat-box .lbl {
+            font-size: 10px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        .cap-summary-banner {
+            background: rgba(241, 196, 15, 0.12);
+            border: 1px solid rgba(241, 196, 15, 0.35);
+            color: var(--gold);
+            padding: 9px 12px;
+            border-radius: 9px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cap-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .cap-rank {
+            font-weight: 900;
+            color: var(--gold);
+            margin-right: 6px;
+        }
+
+        .cal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cal-month-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--white);
+            text-transform: capitalize;
+        }
+
+        .cal-nav-btn {
+            width: auto;
+            margin: 0;
+            padding: 6px 11px;
+            font-size: 12px;
+            border-radius: 7px;
+            background: var(--surface-2);
+            border: 1px solid var(--border);
+            color: var(--white);
+        }
+
+        .cal-weekdays, .cal-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            text-align: center;
+        }
+
+        .cal-weekday {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--muted);
+            padding: 4px 0;
+            text-transform: uppercase;
+        }
+
+        .cal-day {
+            aspect-ratio: 1 / 1;
+            border-radius: 8px;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--white);
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.15s;
+        }
+
+        .cal-day.empty {
+            background: transparent;
+            border-color: transparent;
+            cursor: default;
+        }
+
+        .cal-day.has-data {
+            border-color: var(--accent-blue);
+            background: rgba(29, 111, 216, 0.18);
+        }
+
+        .cal-day.has-data::after {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--gold);
+            position: absolute;
+            bottom: 4px;
+        }
+
+        .cal-day.selected {
+            background: var(--gold);
+            color: #111;
+            border-color: var(--gold);
+            font-weight: 900;
+        }
+
+        .cal-day.selected::after {
+            background: #111;
+        }
+
+        .best-of-day-card {
+            background: linear-gradient(135deg, rgba(241, 196, 15, 0.16), rgba(29, 111, 216, 0.16));
+            border: 1.5px solid var(--gold);
+            border-radius: 12px;
+            padding: 13px;
+            margin-bottom: 12px;
+        }
+
+        .best-badge {
+            display: inline-block;
+            background: var(--gold);
+            color: #111;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 3px 8px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .log-item {
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .log-top {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 4px;
+        }
+
+        .log-sub {
+            color: var(--muted);
+            line-height: 1.45;
+        }
+
+        .alert {
+            display: none;
+            margin: 12px 14px 0;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .alert.error {
+            background: rgba(231, 76, 60, 0.2);
+            color: #ff9e94;
+            border: 1px solid rgba(231, 76, 60, 0.5);
+        }
+
+        .alert.success {
+            background: rgba(46, 204, 113, 0.2);
+            color: #82f7b2;
+            border: 1px solid rgba(46, 204, 113, 0.5);
+        }
+
+        .bottom-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 540px;
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            z-index: 20;
+            padding: 6px 0;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 5px 2px;
+            color: var(--muted);
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .nav-item span {
+            display: block;
+            font-size: 17px;
+            margin-bottom: 2px;
+        }
+
+        .nav-item.active {
+            color: var(--gold);
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+            padding: 18px 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <div class="header-top">
+            <svg class="logo-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 5 C 80 5, 90 20, 90 40 C 90 70, 50 95, 50 95 C 50 95, 10 70, 10 40 C 10 20, 20 5, 50 5 Z" fill="#003a70" stroke="#ffffff" stroke-width="3"/>
+                <circle cx="50" cy="25" r="3" fill="#ffffff"/>
+                <circle cx="35" cy="45" r="3.5" fill="#ffffff"/>
+                <circle cx="65" cy="45" r="3.5" fill="#ffffff"/>
+                <circle cx="50" cy="65" r="4" fill="#ffffff"/>
+                <circle cx="58" cy="55" r="2" fill="#ffffff"/>
+                <text x="50" y="83" fill="#f1c40f" font-size="13" font-weight="bold" font-family="sans-serif" text-anchor="middle" letter-spacing="2">TCS</text>
+            </svg>
+            <div>
+                <h1>Cruzeiro EC</h1>
+                <p>Central de Rendimento & Médias</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="user-bar" id="user-bar">
+        <span id="logged-info">Conectado</span>
+        <button class="btn-logout" onclick="logout()">Sair</button>
+    </div>
+
+    <div id="alert-box" class="alert"></div>
+
+    <!-- LOGIN / REGISTRO -->
+    <div id="screen-auth" class="screen active">
+        <div class="card" id="form-login">
+            <div class="card-title">Entrar no Sistema <span class="tag">Cruzeiro EC</span></div>
+            <div class="form-group">
+                <label>Nick do Jogador / Staff</label>
+                <input type="text" id="login-nick" placeholder="Digite seu nick exato">
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="login-pass" placeholder="Digite sua senha">
+            </div>
+            <button id="btn-login" onclick="doLogin()">Entrar</button>
+            <button class="btn-outline" onclick="toggleAuth('register')">Não tem conta? Registrar-se</button>
+        </div>
+
+        <div class="card" id="form-register" style="display: none;">
+            <div class="card-title">Criar Conta <span class="tag">Registro</span></div>
+            <div class="form-group">
+                <label>Nick do Jogador / Staff</label>
+                <input type="text" id="reg-nick" placeholder="Digite seu nick exato">
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="reg-pass" placeholder="Crie uma senha">
+            </div>
+            <button id="btn-register" onclick="doRegister()">Registrar e Entrar</button>
+            <button class="btn-outline" onclick="toggleAuth('login')">Já tenho conta? Entrar</button>
+        </div>
+    </div>
+
+    <!-- RENDIMENTO & MÉDIAS -->
+    <div id="screen-rendimento" class="screen">
+        <div class="card" style="padding: 12px 14px;">
+            <div class="grid-2">
+                <div>
+                    <label>Filtrar por Posição</label>
+                    <select id="filter-pos" onchange="renderRendimento()">
+                        <option value="ALL">Todas as Posições</option>
+                        <option value="GK">Goleiros (GK)</option>
+                        <option value="CB">Zagueiros (CB)</option>
+                        <option value="MEI">Meias / Laterais / Volantes</option>
+                        <option value="ATA">Ataque (ATA / PE / PD)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Ordenar por</label>
+                    <select id="sort-by" onchange="renderRendimento()">
+                        <option value="rating">Maior Média de Nota</option>
+                        <option value="captain">Maior Chance de Capitão</option>
+                        <option value="passes">Maior % de Passes Certos</option>
+                        <option value="goals">Mais Gols</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="rendimento-list"></div>
+    </div>
+
+    <!-- RENDIMENTO DIÁRIO + MINI CALENDÁRIO -->
+    <div id="screen-diario" class="screen">
+        <div class="card">
+            <div class="card-title">Mini Calendário <span class="tag" id="selected-date-label">Hoje</span></div>
+            <div class="cal-header">
+                <button class="cal-nav-btn" onclick="changeCalendarMonth(-1)">◀ Ant.</button>
+                <div class="cal-month-title" id="cal-month-title">Mês / Ano</div>
+                <button class="cal-nav-btn" onclick="changeCalendarMonth(1)">Próx. ▶</button>
+            </div>
+            <div class="cal-weekdays">
+                <div class="cal-weekday">Dom</div>
+                <div class="cal-weekday">Seg</div>
+                <div class="cal-weekday">Ter</div>
+                <div class="cal-weekday">Qua</div>
+                <div class="cal-weekday">Qui</div>
+                <div class="cal-weekday">Sex</div>
+                <div class="cal-weekday">Sáb</div>
+            </div>
+            <div class="cal-days" id="cal-days" style="margin-top: 6px;"></div>
+            <div style="font-size: 11px; color: var(--muted); margin-top: 10px; text-align: center;">
+                Ponto dourado indica dia com rendimento registrado.
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Rendimento do Dia <span class="tag" id="day-entries-count">0 registros</span></div>
+            <div id="daily-best-box"></div>
+            <div id="daily-entries-list"></div>
+        </div>
+    </div>
+
+    <!-- CHANCE DE CAPITÃO (DIVIDIDA EM 100%) -->
+    <div id="screen-capitao" class="screen">
+        <div class="card">
+            <div class="card-title">Chance de Capitão <span class="tag">Total 100%</span></div>
+            <div class="cap-summary-banner">
+                <span>Distribuição do Elenco</span>
+                <span id="cap-total-check">Soma: 100.0%</span>
+            </div>
+            <p style="font-size: 12px; color: var(--muted); margin-bottom: 12px; line-height: 1.45;">
+                A chance de capitão é distribuída proporcionalmente entre os jogadores do elenco para somar <b>100%</b> no total, baseada na média de nota, jogos, precisão de passes e contribuições em campo.
+            </p>
+            <div id="captain-ranking-list"></div>
+        </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="screen-admin" class="screen">
+        <div class="card">
+            <div class="card-title">1. Adicionar Jogador ao Elenco <span class="tag">Admin</span></div>
+            <div class="form-group">
+                <label>Nick do Jogador</label>
+                <input type="text" id="adm-new-nick" placeholder="Ex: JogadorCruzeiro">
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Posição</label>
+                    <select id="adm-new-pos">
+                        <option value="GK">GK (Goleiro)</option>
+                        <option value="CB">CB (Zagueiro)</option>
+                        <option value="LAT">LAT (Lateral)</option>
+                        <option value="VOL">VOL (Volante)</option>
+                        <option value="MC">MC (Meia Central)</option>
+                        <option value="MEI">MEI (Meia Atacante)</option>
+                        <option value="PE">PE (Ponta Esquerda)</option>
+                        <option value="PD">PD (Ponta Direita)</option>
+                        <option value="ATA">ATA (Atacante)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Número da Camisa</label>
+                    <input type="number" id="adm-new-num" placeholder="Ex: 10" min="1" max="99">
+                </div>
+            </div>
+            <button class="btn-success" onclick="addPlayer()">Cadastrar Jogador</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">2. Lançar Estatísticas & Rendimento <span class="tag">Média Auto</span></div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Selecione o Jogador</label>
+                    <select id="adm-stat-player" onchange="handleStatPlayerChange()">
+                        <option value="">Escolha um jogador...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Dia do Rendimento</label>
+                    <input type="date" id="adm-stat-date">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Jogos (Qtd. a somar)</label>
+                    <input type="number" id="adm-games" value="1" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Nota da Partida / Avaliação (0 a 10)</label>
+                    <input type="number" id="adm-rating" step="0.1" min="0" max="10" placeholder="Ex: 8.2">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Estilo de Jogo</label>
+                <input type="text" id="adm-style" placeholder="Ex: Construtor, Box-to-Box, Arqueiro Ágil, Finalizador...">
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Gols</label>
+                    <input type="number" id="adm-goals" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Assistências</label>
+                    <input type="number" id="adm-assists" value="0" min="0">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Passes Certos</label>
+                    <input type="number" id="adm-pass-ok" value="0" min="0">
+                </div>
+                <div class="form-group">
+                    <label>Passes Errados</label>
+                    <input type="number" id="adm-pass-err" value="0" min="0">
+                </div>
+            </div>
+
+            <div id="box-tackles" class="form-group">
+                <label style="color: var(--gold);">Desarmes (CBs e Meias)</label>
+                <div class="grid-2">
+                    <input type="number" id="adm-tackle-ok" value="0" min="0" placeholder="Desarmes Certos">
+                    <input type="number" id="adm-tackle-err" value="0" min="0" placeholder="Desarmes Errados">
+                </div>
+            </div>
+
+            <div id="box-gk" class="form-group">
+                <label style="color: var(--gold);">Goleiro (GK)</label>
+                <div class="grid-2">
+                    <input type="number" id="adm-saves" value="0" min="0" placeholder="Defesas">
+                    <input type="number" id="adm-conceded" value="0" min="0" placeholder="Gols Sofridos">
+                </div>
+            </div>
+
+            <button class="btn-gold" onclick="savePerformance()">Salvar Rendimento & Atualizar Médias</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">3. Remover Jogador <span class="tag" style="background:var(--danger)">Elenco</span></div>
+            <div class="form-group">
+                <label>Selecione o Jogador para Remover</label>
+                <select id="adm-remove-player">
+                    <option value="">Escolha um jogador...</option>
+                </select>
+            </div>
+            <button class="btn-danger" onclick="removePlayer()">Remover Jogador</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Últimos Lançamentos</div>
+            <div id="adm-history-list"></div>
+        </div>
+    </div>
+
+    <div class="bottom-nav" id="main-nav">
+        <div class="nav-item active" id="nav-rendimento" onclick="switchTab('rendimento')"><span>📊</span>Rendimento</div>
+        <div class="nav-item" id="nav-diario" onclick="switchTab('diario')"><span>📅</span>Diário</div>
+        <div class="nav-item" id="nav-capitao" onclick="switchTab('capitao')"><span>©️</span>Capitão</div>
+        <div class="nav-item" id="nav-admin" onclick="switchTab('admin')" style="display:none;"><span>⚙️</span>Admin</div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+    const RENDIMENTO_ADMINS = ['ddddddavi123', 'cpe_chorapraespada', 'wiirttzx0'];
+    const LOCAL_STORAGE_KEY = 'cruzeiroRendimentoDB_v1';
+
+    let db = {
+        users: [],
+        players: [],
+        logs: []
+    };
+
+    let dbRef = null;
+    let currentUser = null;
+    let initialSessionChecked = false;
+
+    const nowObj = new Date();
+    let calYear = nowObj.getFullYear();
+    let calMonth = nowObj.getMonth();
+    let selectedDateStr = formatDateISO(nowObj);
+
+    function formatDateISO(dateObj) {
+        const y = dateObj.getFullYear();
+        const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+        const d = String(dateObj.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    function formatDateBR(isoStr) {
+        if (!isoStr || !isoStr.includes('-')) return isoStr || '-';
+        const [y, m, d] = isoStr.split('-');
+        return `${d}/${m}/${y}`;
+    }
+
+    function loadLocalFallback() {
+        try {
+            const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                db.users = Array.isArray(parsed.users) ? parsed.users : [];
+                db.players = Array.isArray(parsed.players) ? parsed.players : [];
+                db.logs = Array.isArray(parsed.logs) ? parsed.logs : [];
+            }
+        } catch (e) {
+            console.warn('Erro ao ler localStorage:', e);
+        }
+    }
+
+    function saveLocalFallback() {
+        try {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(db));
+        } catch (e) {
+            console.warn('Erro ao salvar localStorage:', e);
+        }
+    }
+
+    function initFirebaseSafe() {
+        try {
+            if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+                firebase.initializeApp({
+                    apiKey: "AIzaSyD8LvBPf8YNbSOkgao7eoJ0UnRnT1yeWMA",
+                    authDomain: "cruzeiroapp-7c9c7.firebaseapp.com",
+                    databaseURL: "https://cruzeiroapp-7c9c7-default-rtdb.firebaseio.com",
+                    projectId: "cruzeiroapp-7c9c7",
+                    storageBucket: "cruzeiroapp-7c9c7.firebasestorage.app",
+                    messagingSenderId: "932830965096",
+                    appId: "1:932830965096:web:0e6ffa68598b5352753add",
+                    measurementId: "G-SGZ8L74EZK"
+                });
+            }
+            if (typeof firebase !== 'undefined' && firebase.apps.length) {
+                dbRef = firebase.database().ref('cruzeiroRendimentoDB');
+                dbRef.on('value', (snapshot) => {
+                    const val = snapshot.val();
+                    if (val) {
+                        db.users = Array.isArray(val.users) ? val.users : [];
+                        db.players = Array.isArray(val.players) ? val.players : [];
+                        db.logs = Array.isArray(val.logs) ? val.logs : [];
+                        saveLocalFallback();
+                    }
+                    if (!initialSessionChecked) {
+                        restoreSessionIfAny();
+                    } else if (currentUser) {
+                        refreshActiveScreen();
+                    }
+                }, (err) => {
+                    console.warn('Firebase leitura bloqueada/offline, usando armazenamento local:', err);
+                    restoreSessionIfAny();
+                });
+            } else {
+                restoreSessionIfAny();
+            }
+        } catch (err) {
+            console.warn('Falha ao iniciar Firebase, usando armazenamento local:', err);
+            restoreSessionIfAny();
+        }
+    }
+
+    function restoreSessionIfAny() {
+        if (initialSessionChecked) return;
+        initialSessionChecked = true;
+        try {
+            const savedNick = sessionStorage.getItem('cruzeiroRendimentoUser');
+            if (savedNick) {
+                const found = db.users.find(u => u.nick && u.nick.toLowerCase() === savedNick.toLowerCase());
+                if (found) {
+                    currentUser = found;
+                    openApp();
+                }
+            }
+        } catch (e) {}
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        loadLocalFallback();
+        const dateInput = document.getElementById('adm-stat-date');
+        if (dateInput && !dateInput.value) {
+            dateInput.value = selectedDateStr;
+        }
+        initFirebaseSafe();
+        setTimeout(() => restoreSessionIfAny(), 500);
+    });
+
+    function saveDB() {
+        saveLocalFallback();
+        if (dbRef) {
+            dbRef.set(db).catch((err) => {
+                console.warn('Erro ao sincronizar no Firebase:', err);
+            });
+        }
+    }
+
+    function showAlert(msg, type = 'success') {
+        const box = document.getElementById('alert-box');
+        box.className = `alert ${type}`;
+        box.innerText = msg;
+        box.style.display = 'block';
+        clearTimeout(window.__alertTimer);
+        window.__alertTimer = setTimeout(() => {
+            box.style.display = 'none';
+        }, 3200);
+    }
+
+    function toggleAuth(mode) {
+        document.getElementById('form-login').style.display = mode === 'login' ? 'block' : 'none';
+        document.getElementById('form-register').style.display = mode === 'register' ? 'block' : 'none';
+    }
+
+    function doRegister() {
+        const nick = document.getElementById('reg-nick').value.trim();
+        const pass = document.getElementById('reg-pass').value;
+
+        if (!nick || !pass) return showAlert("Preencha nick e senha!", "error");
+        if (db.users.some(u => u.nick && u.nick.toLowerCase() === nick.toLowerCase())) {
+            return showAlert("Este nick já está registrado!", "error");
+        }
+
+        const role = RENDIMENTO_ADMINS.includes(nick.toLowerCase()) ? 'admin' : 'member';
+        const userObj = { nick, pass, role };
+        db.users.push(userObj);
+        saveDB();
+
+        currentUser = userObj;
+        try { sessionStorage.setItem('cruzeiroRendimentoUser', nick); } catch (e) {}
+        showAlert("Conta criada com sucesso!", "success");
+        openApp();
+    }
+
+    function doLogin() {
+        const nick = document.getElementById('login-nick').value.trim();
+        const pass = document.getElementById('login-pass').value;
+
+        if (!nick || !pass) return showAlert("Digite seu nick e senha!", "error");
+
+        const user = db.users.find(u => u.nick && u.nick.toLowerCase() === nick.toLowerCase() && u.pass === pass);
+        if (!user) return showAlert("Nick ou senha incorretos!", "error");
+
+        if (RENDIMENTO_ADMINS.includes(user.nick.toLowerCase()) && user.role !== 'admin') {
+            user.role = 'admin';
+            saveDB();
+        }
+
+        currentUser = user;
+        try { sessionStorage.setItem('cruzeiroRendimentoUser', user.nick); } catch (e) {}
+        openApp();
+    }
+
+    function logout() {
+        currentUser = null;
+        try { sessionStorage.removeItem('cruzeiroRendimentoUser'); } catch (e) {}
+        document.getElementById('main-nav').style.display = 'none';
+        document.getElementById('user-bar').style.display = 'none';
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-auth').classList.add('active');
+    }
+
+    function openApp() {
+        document.getElementById('screen-auth').classList.remove('active');
+        document.getElementById('main-nav').style.display = 'flex';
+        document.getElementById('user-bar').style.display = 'flex';
+        const isAdmin = currentUser && (currentUser.role === 'admin' || RENDIMENTO_ADMINS.includes(String(currentUser.nick || '').toLowerCase()));
+        document.getElementById('logged-info').innerText = `Usuário: ${currentUser.nick} (${isAdmin ? 'ADMIN' : 'Elenco'})`;
+        document.getElementById('nav-admin').style.display = isAdmin ? 'block' : 'none';
+        switchTab('rendimento');
+    }
+
+    function switchTab(tab) {
+        const isAdmin = currentUser && (currentUser.role === 'admin' || RENDIMENTO_ADMINS.includes(String(currentUser.nick || '').toLowerCase()));
+        if (tab === 'admin' && !isAdmin) {
+            return showAlert("Acesso restrito aos administradores!", "error");
+        }
+
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+        document.getElementById(`screen-${tab}`).classList.add('active');
+        document.getElementById(`nav-${tab}`).classList.add('active');
+
+        refreshActiveScreen(tab);
+    }
+
+    function refreshActiveScreen(forcedTab = null) {
+        const activeTab = forcedTab || document.querySelector('.screen.active')?.id.replace('screen-', '');
+        if (activeTab === 'rendimento') renderRendimento();
+        if (activeTab === 'diario') renderDailyTab();
+        if (activeTab === 'capitao') renderCaptainRanking();
+        if (activeTab === 'admin') {
+            populateAdminSelects();
+            renderHistory();
+        }
+    }
+
+    function computeRawCaptainPoints(rawGames, ratingCount, avgRating, passAccuracy, goalsPerGame, assistsPerGame, tackleOkPerGame, savesPerGame, concededPerGame) {
+        if (rawGames <= 0 && ratingCount <= 0) return 1;
+        const rPart = ratingCount > 0 ? (avgRating / 10) * 45 : 15;
+        const pPart = (passAccuracy / 100) * 25;
+        const gPart = Math.min(15, rawGames * 1.5);
+        const cPart = Math.max(
+            0,
+            Math.min(15, goalsPerGame * 4 + assistsPerGame * 3.5 + tackleOkPerGame * 1.5 + savesPerGame * 1.2 - concededPerGame * 1.5)
+        );
+        return Math.max(1, rPart + pPart + gPart + cPart);
+    }
+
+    function buildMetricsMap(playersList) {
+        const temp = playersList.map(p => {
+            const rawGames = Number(p.games) || 0;
+            const goals = Number(p.goals) || 0;
+            const assists = Number(p.assists) || 0;
+            const passOk = Number(p.passOk) || 0;
+            const passErr = Number(p.passErr) || 0;
+            const tackleOk = Number(p.tackleOk) || 0;
+            const tackleErr = Number(p.tackleErr) || 0;
+            const saves = Number(p.saves) || 0;
+            const conceded = Number(p.conceded) || 0;
+            const ratingSum = Number(p.ratingSum) || 0;
+            const ratingCount = Number(p.ratingCount) || 0;
+
+            const avgRating = ratingCount > 0 ? (ratingSum / ratingCount) : 0;
+            const totalPasses = passOk + passErr;
+            const passAccuracy = totalPasses > 0 ? Math.round((passOk / totalPasses) * 100) : 0;
+
+            const totalTackles = tackleOk + tackleErr;
+            const tackleAccuracy = totalTackles > 0 ? Math.round((tackleOk / totalTackles) * 100) : 0;
+
+            const goalsPerGame = rawGames > 0 ? (goals / rawGames) : 0;
+            const assistsPerGame = rawGames > 0 ? (assists / rawGames) : 0;
+            const passOkPerGame = rawGames > 0 ? (passOk / rawGames) : 0;
+            const tackleOkPerGame = rawGames > 0 ? (tackleOk / rawGames) : 0;
+            const savesPerGame = rawGames > 0 ? (saves / rawGames) : 0;
+            const concededPerGame = rawGames > 0 ? (conceded / rawGames) : 0;
+
+            const rawPoints = computeRawCaptainPoints(
+                rawGames, ratingCount, avgRating, passAccuracy,
+                goalsPerGame, assistsPerGame, tackleOkPerGame, savesPerGame, concededPerGame
+            );
+
+            return {
+                id: p.id,
+                rawGames,
+                ratingCount,
+                avgRating,
+                passAccuracy,
+                tackleAccuracy,
+                goalsPerGame,
+                assistsPerGame,
+                passOkPerGame,
+                tackleOkPerGame,
+                savesPerGame,
+                concededPerGame,
+                rawPoints
+            };
+        });
+
+        const totalPoints = temp.reduce((acc, item) => acc + item.rawPoints, 0);
+        const map = {};
+        let runningShare = 0;
+
+        temp.forEach((item, idx) => {
+            let share = 0;
+            if (totalPoints > 0) {
+                if (idx === temp.length - 1) {
+                    share = Math.max(0, Number((100 - runningShare).toFixed(1)));
+                } else {
+                    share = Number(((item.rawPoints / totalPoints) * 100).toFixed(1));
+                    runningShare += share;
+                }
+            }
+            map[item.id] = {
+                ...item,
+                captainShare: share
+            };
+        });
+
+        return map;
+    }
+
+    function renderRendimento() {
+        const container = document.getElementById('rendimento-list');
+        const posFilter = document.getElementById('filter-pos').value;
+        const sortBy = document.getElementById('sort-by').value;
+
+        const metricsMap = buildMetricsMap(db.players);
+        let list = db.players.map(p => ({ ...p, m: metricsMap[p.id] }));
+
+        if (posFilter !== 'ALL') {
+            if (posFilter === 'MEI') {
+                list = list.filter(item => ['MEI', 'MC', 'VOL', 'LAT'].includes(item.pos));
+            } else if (posFilter === 'ATA') {
+                list = list.filter(item => ['ATA', 'PE', 'PD'].includes(item.pos));
+            } else {
+                list = list.filter(item => item.pos === posFilter);
+            }
+        }
+
+        list.sort((a, b) => {
+            if (sortBy === 'captain') return b.m.captainShare - a.m.captainShare;
+            if (sortBy === 'passes') return b.m.passAccuracy - a.m.passAccuracy;
+            if (sortBy === 'goals') return (b.goals || 0) - (a.goals || 0);
+            return b.m.avgRating - a.m.avgRating;
+        });
+
+        if (list.length === 0) {
+            container.innerHTML = `<div class="card"><div class="empty-msg">Nenhum jogador encontrado nesse filtro.</div></div>`;
+            return;
+        }
+
+        container.innerHTML = list.map(p => {
+            const m = p.m;
+            const isGK = p.pos === 'GK';
+            const isDefMid = ['CB', 'MEI', 'MC', 'VOL', 'LAT'].includes(p.pos);
+
+            return `
+                <div class="player-card">
+                    <div class="player-top">
+                        <div class="player-identity">
+                            <div class="jersey-box">
+                                <span class="jersey-num">#${p.num}</span>
+                                <span class="jersey-pos">${p.pos}</span>
+                            </div>
+                            <div>
+                                <div class="player-name">${p.nick}</div>
+                                <div class="player-style">Estilo: <b>${p.style || 'Não definido'}</b></div>
+                            </div>
+                        </div>
+                        <div class="rating-pill">
+                            <strong>${m.ratingCount > 0 ? m.avgRating.toFixed(1) : '-'}</strong>
+                            <small>Média Nota</small>
+                        </div>
+                    </div>
+
+                    <div class="captain-box">
+                        <div class="captain-header">
+                            <span>©️ Chance de Capitão (Fatia 100%)</span>
+                            <span class="captain-pct">${m.captainShare.toFixed(1)}%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" style="width: ${Math.min(100, m.captainShare)}%"></div>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="val">${m.rawGames}</div>
+                            <div class="avg">Média: ${m.ratingCount > 0 ? m.avgRating.toFixed(1) : '0.0'} nota</div>
+                            <div class="lbl">Jogos</div>
+                        </div>
+
+                        <div class="stat-box">
+                            <div class="val">${p.goals || 0}G / ${p.assists || 0}A</div>
+                            <div class="avg">Média: ${m.goalsPerGame.toFixed(2)}G • ${m.assistsPerGame.toFixed(2)}A</div>
+                            <div class="lbl">Gols e Assist.</div>
+                        </div>
+
+                        <div class="stat-box">
+                            <div class="val">${p.passOk || 0}C / ${p.passErr || 0}E</div>
+                            <div class="avg">${m.passAccuracy}% certos (${m.passOkPerGame.toFixed(1)}/j)</div>
+                            <div class="lbl">Passes</div>
+                        </div>
+
+                        ${isDefMid ? `
+                        <div class="stat-box" style="grid-column: span 3;">
+                            <div class="val">${p.tackleOk || 0} Certos / ${p.tackleErr || 0} Errados</div>
+                            <div class="avg">Precisão: ${m.tackleAccuracy}% • Média: ${m.tackleOkPerGame.toFixed(1)} desarmes/jogo</div>
+                            <div class="lbl">Desarmes (${p.pos})</div>
+                        </div>` : ''}
+
+                        ${isGK ? `
+                        <div class="stat-box" style="grid-column: span 2;">
+                            <div class="val">${p.saves || 0} Defesas</div>
+                            <div class="avg">Média: ${m.savesPerGame.toFixed(1)} por jogo</div>
+                            <div class="lbl">Defesas (GK)</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="val">${p.conceded || 0} Sofridos</div>
+                            <div class="avg">Média: ${m.concededPerGame.toFixed(1)}/jogo</div>
+                            <div class="lbl">Gols Sofridos</div>
+                        </div>` : ''}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function changeCalendarMonth(delta) {
+        calMonth += delta;
+        if (calMonth < 0) {
+            calMonth = 11;
+            calYear -= 1;
+        } else if (calMonth > 11) {
+            calMonth = 0;
+            calYear += 1;
+        }
+        renderMiniCalendar();
+    }
+
+    function selectCalendarDay(isoDate) {
+        selectedDateStr = isoDate;
+        renderMiniCalendar();
+        renderDailyEntries();
+    }
+
+    function renderMiniCalendar() {
+        const titleEl = document.getElementById('cal-month-title');
+        const daysEl = document.getElementById('cal-days');
+        const labelEl = document.getElementById('selected-date-label');
+
+        const monthDate = new Date(calYear, calMonth, 1);
+        titleEl.innerText = monthDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        labelEl.innerText = formatDateBR(selectedDateStr);
+
+        const datesWithLogs = new Set((db.logs || []).map(l => l.dateISO).filter(Boolean));
+        const firstDayIdx = monthDate.getDay();
+        const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+        let html = '';
+        for (let i = 0; i < firstDayIdx; i++) {
+            html += `<div class="cal-day empty"></div>`;
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const iso = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const hasData = datesWithLogs.has(iso);
+            const isSelected = iso === selectedDateStr;
+            html += `
+                <div class="cal-day ${hasData ? 'has-data' : ''} ${isSelected ? 'selected' : ''}" onclick="selectCalendarDay('${iso}')">
+                    ${day}
+                </div>
+            `;
+        }
+
+        daysEl.innerHTML = html;
+    }
+
+    function scoreDailyEntry(entry) {
+        const ratingVal = typeof entry.rating === 'number' && !Number.isNaN(entry.rating) ? entry.rating * 10 : 0;
+        const g = Number(entry.goals) || 0;
+        const a = Number(entry.assists) || 0;
+        const pOk = Number(entry.passOk) || 0;
+        const pErr = Number(entry.passErr) || 0;
+        const tOk = Number(entry.tackleOk) || 0;
+        const tErr = Number(entry.tackleErr) || 0;
+        const saves = Number(entry.saves) || 0;
+        const conceded = Number(entry.conceded) || 0;
+
+        const passRatio = (pOk + pErr) > 0 ? (pOk / (pOk + pErr)) * 15 : 0;
+        return ratingVal + g * 8 + a * 6 + passRatio + tOk * 2.5 - tErr * 1 + saves * 2 - conceded * 2;
+    }
+
+    function renderDailyEntries() {
+        const bestBox = document.getElementById('daily-best-box');
+        const listBox = document.getElementById('daily-entries-list');
+        const countTag = document.getElementById('day-entries-count');
+
+        const dayLogs = (db.logs || []).filter(l => l.dateISO === selectedDateStr);
+        countTag.innerText = `${dayLogs.length} ${dayLogs.length === 1 ? 'registro' : 'registros'}`;
+
+        if (dayLogs.length === 0) {
+            bestBox.innerHTML = '';
+            listBox.innerHTML = `<div class="empty-msg">Nenhum rendimento lançado em <b>${formatDateBR(selectedDateStr)}</b>.</div>`;
+            return;
+        }
+
+        const rankedDay = [...dayLogs].sort((a, b) => scoreDailyEntry(b) - scoreDailyEntry(a));
+        const best = rankedDay[0];
+
+        bestBox.innerHTML = `
+            <div class="best-of-day-card">
+                <div class="best-badge">⭐ Melhor do Dia • ${formatDateBR(selectedDateStr)}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div style="font-size:16px; font-weight:900;">${best.nick} <span style="font-size:12px; color:var(--gold);">(${best.pos})</span></div>
+                        <div style="font-size:12px; color:var(--muted); margin-top:3px;">${best.summary}</div>
+                    </div>
+                    <div style="text-align:right; min-width:64px;">
+                        <div style="font-size:17px; font-weight:900; color:var(--gold);">${typeof best.rating === 'number' ? best.rating.toFixed(1) : '-'}</div>
+                        <div style="font-size:10px; color:var(--muted);">Nota</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        listBox.innerHTML = rankedDay.map((l, idx) => `
+            <div class="log-item">
+                <div class="log-top">
+                    <span>${idx === 0 ? '👑 ' : ''}${l.nick} (${l.pos})</span>
+                    <span style="color:var(--gold);">${typeof l.rating === 'number' ? 'Nota ' + l.rating.toFixed(1) : 'Sem nota'}</span>
+                </div>
+                <div class="log-sub">${l.summary} • <i>por ${l.by}</i></div>
+            </div>
+        `).join('');
+    }
+
+    function renderDailyTab() {
+        renderMiniCalendar();
+        renderDailyEntries();
+    }
+
+    function renderCaptainRanking() {
+        const container = document.getElementById('captain-ranking-list');
+        const sumEl = document.getElementById('cap-total-check');
+
+        if (db.players.length === 0) {
+            sumEl.innerText = "Soma: 0.0%";
+            container.innerHTML = `<div class="empty-msg">Nenhum jogador cadastrado ainda.</div>`;
+            return;
+        }
+
+        const metricsMap = buildMetricsMap(db.players);
+        const ranked = db.players
+            .map(p => ({ ...p, m: metricsMap[p.id] }))
+            .sort((a, b) => b.m.captainShare - a.m.captainShare);
+
+        const totalShare = ranked.reduce((acc, item) => acc + item.m.captainShare, 0);
+        sumEl.innerText = `Soma: ${totalShare.toFixed(1)}%`;
+
+        container.innerHTML = ranked.map((item, idx) => `
+            <div class="cap-item">
+                <div style="flex: 1; padding-right: 10px;">
+                    <div>
+                        <span class="cap-rank">#${idx + 1}</span>
+                        <b>${item.nick}</b> <span style="font-size:11px; color:var(--muted);">(${item.pos} • #${item.num})</span>
+                    </div>
+                    <div style="font-size:11px; color:var(--muted); margin-top:2px;">
+                        Nota média: ${item.m.avgRating.toFixed(1)} • Passes: ${item.m.passAccuracy}% • ${item.m.rawGames}J
+                    </div>
+                    <div class="progress-track" style="margin-top:6px;">
+                        <div class="progress-fill" style="width:${Math.min(100, item.m.captainShare)}%"></div>
+                    </div>
+                </div>
+                <div style="font-size:16px; font-weight:900; color:var(--gold);">${item.m.captainShare.toFixed(1)}%</div>
+            </div>
+        `).join('');
+    }
+
+    function populateAdminSelects() {
+        const statSel = document.getElementById('adm-stat-player');
+        const remSel = document.getElementById('adm-remove-player');
+        const dateInput = document.getElementById('adm-stat-date');
+        const prevStat = statSel.value;
+        const prevRem = remSel.value;
+
+        if (dateInput && !dateInput.value) {
+            dateInput.value = selectedDateStr;
+        }
+
+        statSel.innerHTML = '<option value="">Escolha um jogador...</option>';
+        remSel.innerHTML = '<option value="">Escolha um jogador...</option>';
+
+        const sorted = [...db.players].sort((a, b) => Number(a.num) - Number(b.num));
+        sorted.forEach(p => {
+            const label = `${p.nick} (#${p.num} - ${p.pos})`;
+            statSel.innerHTML += `<option value="${p.id}">${label}</option>`;
+            remSel.innerHTML += `<option value="${p.id}">${label}</option>`;
+        });
+
+        if (prevStat) statSel.value = prevStat;
+        if (prevRem) remSel.value = prevRem;
+        handleStatPlayerChange();
+    }
+
+    function handleStatPlayerChange() {
+        const id = document.getElementById('adm-stat-player').value;
+        const player = db.players.find(p => p.id === id);
+        if (!player) return;
+        if (player.style) {
+            document.getElementById('adm-style').value = player.style;
+        }
+    }
+
+    function addPlayer() {
+        const nick = document.getElementById('adm-new-nick').value.trim();
+        const pos = document.getElementById('adm-new-pos').value;
+        const num = document.getElementById('adm-new-num').value;
+
+        if (!nick || !num) return showAlert("Preencha o nick e o número da camisa!", "error");
+        if (db.players.some(p => p.nick.toLowerCase() === nick.toLowerCase())) {
+            return showAlert("Esse jogador já está no elenco!", "error");
+        }
+        if (db.players.some(p => Number(p.num) === Number(num))) {
+            return showAlert(`A camisa #${num} já está em uso!`, "error");
+        }
+
+        db.players.push({
+            id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+            nick,
+            pos,
+            num: Number(num),
+            style: 'A definir',
+            games: 0,
+            goals: 0,
+            assists: 0,
+            passOk: 0,
+            passErr: 0,
+            tackleOk: 0,
+            tackleErr: 0,
+            saves: 0,
+            conceded: 0,
+            ratingSum: 0,
+            ratingCount: 0
+        });
+
+        saveDB();
+        document.getElementById('adm-new-nick').value = '';
+        document.getElementById('adm-new-num').value = '';
+        populateAdminSelects();
+        showAlert(`${nick} (#${num} - ${pos}) adicionado ao elenco!`, "success");
+    }
+
+    function savePerformance() {
+        const id = document.getElementById('adm-stat-player').value;
+        if (!id) return showAlert("Selecione um jogador!", "error");
+
+        const idx = db.players.findIndex(p => p.id === id);
+        if (idx === -1) return showAlert("Jogador não encontrado!", "error");
+
+        const chosenDate = document.getElementById('adm-stat-date').value || formatDateISO(new Date());
+        const games = Math.max(0, parseInt(document.getElementById('adm-games').value) || 0);
+        const goals = Math.max(0, parseInt(document.getElementById('adm-goals').value) || 0);
+        const assists = Math.max(0, parseInt(document.getElementById('adm-assists').value) || 0);
+        const passOk = Math.max(0, parseInt(document.getElementById('adm-pass-ok').value) || 0);
+        const passErr = Math.max(0, parseInt(document.getElementById('adm-pass-err').value) || 0);
+        const tackleOk = Math.max(0, parseInt(document.getElementById('adm-tackle-ok').value) || 0);
+        const tackleErr = Math.max(0, parseInt(document.getElementById('adm-tackle-err').value) || 0);
+        const saves = Math.max(0, parseInt(document.getElementById('adm-saves').value) || 0);
+        const conceded = Math.max(0, parseInt(document.getElementById('adm-conceded').value) || 0);
+        const style = document.getElementById('adm-style').value.trim();
+        const ratingInput = document.getElementById('adm-rating').value;
+        const rating = ratingInput !== '' ? Math.max(0, Math.min(10, parseFloat(ratingInput))) : null;
+
+        const p = db.players[idx];
+        p.games = (p.games || 0) + games;
+        p.goals = (p.goals || 0) + goals;
+        p.assists = (p.assists || 0) + assists;
+        p.passOk = (p.passOk || 0) + passOk;
+        p.passErr = (p.passErr || 0) + passErr;
+        p.tackleOk = (p.tackleOk || 0) + tackleOk;
+        p.tackleErr = (p.tackleErr || 0) + tackleErr;
+        p.saves = (p.saves || 0) + saves;
+        p.conceded = (p.conceded || 0) + conceded;
+
+        if (style) p.style = style;
+        if (rating !== null && !Number.isNaN(rating)) {
+            p.ratingSum = (p.ratingSum || 0) + rating;
+            p.ratingCount = (p.ratingCount || 0) + 1;
+        }
+
+        const summaryText =
+            `+${games}J, +${goals}G, +${assists}A, Passes ${passOk}C/${passErr}E` +
+            (rating !== null && !Number.isNaN(rating) ? `, Nota ${rating.toFixed(1)}` : '') +
+            (p.pos === 'GK' ? `, Def ${saves}/GS ${conceded}` : `, Des ${tackleOk}C/${tackleErr}E`);
+
+        db.logs.push({
+            id: 'l_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
+            nick: p.nick,
+            pos: p.pos,
+            by: currentUser.nick,
+            dateISO: chosenDate,
+            date: formatDateBR(chosenDate),
+            rating: rating !== null && !Number.isNaN(rating) ? rating : null,
+            goals,
+            assists,
+            passOk,
+            passErr,
+            tackleOk,
+            tackleErr,
+            saves,
+            conceded,
+            summary: summaryText
+        });
+        if (db.logs.length > 150) db.logs.shift();
+
+        selectedDateStr = chosenDate;
+        const [cy, cm] = chosenDate.split('-').map(Number);
+        if (cy && cm) {
+            calYear = cy;
+            calMonth = cm - 1;
+        }
+
+        saveDB();
+
+        document.getElementById('adm-games').value = '1';
+        document.getElementById('adm-rating').value = '';
+        document.getElementById('adm-goals').value = '0';
+        document.getElementById('adm-assists').value = '0';
+        document.getElementById('adm-pass-ok').value = '0';
+        document.getElementById('adm-pass-err').value = '0';
+        document.getElementById('adm-tackle-ok').value = '0';
+        document.getElementById('adm-tackle-err').value = '0';
+        document.getElementById('adm-saves').value = '0';
+        document.getElementById('adm-conceded').value = '0';
+
+        renderHistory();
+        showAlert(`Rendimento de ${p.nick} salvo (${formatDateBR(chosenDate)})!`, "success");
+    }
+
+    function removePlayer() {
+        const id = document.getElementById('adm-remove-player').value;
+        if (!id) return showAlert("Selecione um jogador para remover!", "error");
+
+        const player = db.players.find(p => p.id === id);
+        if (!player) return;
+
+        if (!confirm(`Remover ${player.nick} (#${player.num}) do elenco?`)) return;
+
+        db.players = db.players.filter(p => p.id !== id);
+        saveDB();
+        populateAdminSelects();
+        showAlert(`${player.nick} removido do elenco.`, "success");
+    }
+
+    function renderHistory() {
+        const box = document.getElementById('adm-history-list');
+        if (!db.logs || db.logs.length === 0) {
+            box.innerHTML = `<div class="empty-msg">Nenhum lançamento registrado ainda.</div>`;
+            return;
+        }
+
+        box.innerHTML = [...db.logs].reverse().slice(0, 12).map(l => `
+            <div class="log-item">
+                <div class="log-top">
+                    <span>${l.nick} (${l.pos})</span>
+                    <span style="color:var(--gold); font-size:11px;">📅 ${l.date || formatDateBR(l.dateISO)}</span>
+                </div>
+                <div class="log-sub">${l.summary} • <i>por ${l.by}</i></div>
+            </div>
+        `).join('');
+    }
+</script>
+</body>
+</html>
